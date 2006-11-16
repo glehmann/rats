@@ -68,11 +68,11 @@ RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, TMaskImage>
     {
     return;
     }
-    
+
   ImageRegionConstIteratorWithIndex< InputImageType > iIt( m_Input,
                                                      m_Input->GetRequestedRegion() ); 
   iIt.GoToBegin();
-  ImageRegionConstIterator< GradientImageType > gIt( m_Gradient,
+  ImageRegionConstIteratorWithIndex< GradientImageType > gIt( m_Gradient,
                                                      m_Gradient->GetRequestedRegion() ); 
   gIt.GoToBegin();
 
@@ -82,17 +82,17 @@ RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, TMaskImage>
   
   while( !iIt.IsAtEnd() )
     {
-//    if( !m_Mask || m_Mask->GetPixel( iIt.GetIndex() ) == m_MaskValue )
-//      {
+    if( !m_Mask || m_Mask->GetPixel( iIt.GetIndex() ) == m_MaskValue )
+      {
       double g = pow( gIt.Get(), m_Pow );
       n += iIt.Get() * g;
       d += g;
-//  std::cout << "n: " << iIt.Get()+0.0 << "  d: " << gIt.Get() << std::endl;
-//      }
+      }
     ++iIt;
+    ++gIt;
     }
     
-  std::cout << "n: " << n << "  d: " << d << std::endl;
+//   std::cout << "n: " << n << "  d: " << d << std::endl;
   m_Output = static_cast< InputPixelType >( n / d );
   m_Valid = true;
 
@@ -105,7 +105,7 @@ const typename RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, T
 RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, TMaskImage>
 ::GetOutput() const
 {
-  if (!m_Valid)        
+  if (!m_Valid)
     {
     itkExceptionMacro( << "GetOutput() invoked, but the output have not been computed. Call Compute() first.");
     }

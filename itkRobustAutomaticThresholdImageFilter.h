@@ -131,7 +131,7 @@ public:
   /** Get the mask image */
   MaskImageType * GetMaskImage()
     {
-    return static_cast<MaskImageType*>(const_cast<DataObject *>(this->ProcessObject::GetInput(1)));
+    return static_cast<MaskImageType*>(const_cast<DataObject *>(this->ProcessObject::GetInput(2)));
     }
 
 

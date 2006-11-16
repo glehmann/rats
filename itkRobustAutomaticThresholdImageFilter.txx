@@ -57,7 +57,7 @@ RobustAutomaticThresholdImageFilter<TInputImage, TGradientImage, TMaskImage, TOu
   typename BinaryThresholdImageFilter<TInputImage,TOutputImage>::Pointer threshold = 
     BinaryThresholdImageFilter<TInputImage,TOutputImage>::New();;
   
-  progress->RegisterInternalFilter(threshold,.5f);
+  progress->RegisterInternalFilter(threshold, 1);
   threshold->GraftOutput (this->GetOutput());
   threshold->SetInput (this->GetInput());
   threshold->SetLowerThreshold( m_Threshold );
@@ -74,6 +74,11 @@ RobustAutomaticThresholdImageFilter<TInputImage, TGradientImage, TMaskImage, TOu
 ::GenerateInputRequestedRegion()
 {
   const_cast<TInputImage *>(this->GetInput())->SetRequestedRegionToLargestPossibleRegion();
+  const_cast<TGradientImage *>(this->GetGradientImage())->SetRequestedRegionToLargestPossibleRegion();
+  if( this->GetMaskImage() )
+    {
+    const_cast<TMaskImage *>(this->GetMaskImage())->SetRequestedRegionToLargestPossibleRegion();
+    }
 }
 
 template<class TInputImage, class TGradientImage, class TMaskImage, class TOutputImage>
@@ -84,7 +89,7 @@ RobustAutomaticThresholdImageFilter<TInputImage, TGradientImage, TMaskImage, TOu
   Superclass::PrintSelf(os,indent);
 
   os << indent << "Threshold: " << static_cast<typename NumericTraits<InputPixelType>::PrintType>(m_Threshold) << std::endl;
-  os << indent << "MaskValue: " << m_MaskValue << std::endl;
+  os << indent << "MaskValue: " << static_cast<typename NumericTraits<MaskPixelType>::PrintType>(m_MaskValue) << std::endl;
   os << indent << "Pow: " << m_Pow << std::endl;
 }
 
