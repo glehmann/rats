@@ -23,24 +23,12 @@
 namespace itk {
 
 /** \class RobustAutomaticThresholdImageFilter 
- * \brief Threshold an image using multiple Otsu Thresholds.
+ * \brief Threshold an image using RATS method.
  *
- * This filter creates a labeled image that separates the input
- * image into various classes. The filter
- * computes the thresholds using the MaximumEntropyThresholdCalculator and
- * applies those thesholds to the input image using the
- * ThresholdLabelerImageFilter. The NumberOfHistogramBins and
- * NumberOfThresholds can be set
- * for the Calculator. The LabelOffset can be set
- * for the ThresholdLabelerImageFilter.
- *
- * \sa ScalarImageToHistogramGenerator
- * \sa MaximumEntropyThresholdCalculator
- * \sa ThresholdLabelerImageFilter
  * \ingroup IntensityImageFilters  Multithreaded
  */
 
-template<class TInputImage, class TGradientImage=TInputImage, class TMaskImage=Image<unsigned char, TInputImage::ImageDimension>, class TOutputImage=TInputImage>
+template<class TInputImage, class TGradientImage=TInputImage, class TOutputImage=TInputImage>
 class ITK_EXPORT RobustAutomaticThresholdImageFilter : 
     public ImageToImageFilter<TInputImage, TOutputImage>
 {
@@ -60,19 +48,16 @@ public:
   /** Standard image type within this class. */
   typedef TInputImage InputImageType;
   typedef TGradientImage GradientImageType;
-  typedef TMaskImage MaskImageType;
 
   /** Image pixel value typedef. */
   typedef typename TInputImage::PixelType   InputPixelType;
   typedef typename TOutputImage::PixelType   OutputPixelType;
   typedef typename TGradientImage::PixelType   GradientPixelType;
-  typedef typename TMaskImage::PixelType   MaskPixelType;
   
   /** Image related typedefs. */
   typedef typename TInputImage::Pointer InputImagePointer;
   typedef typename TOutputImage::Pointer OutputImagePointer;
   typedef typename TGradientImage::Pointer GradientImagePointer;
-  typedef typename TMaskImage::Pointer MaskImagePointer;
 
   typedef typename TInputImage::SizeType  InputSizeType;
   typedef typename TInputImage::IndexType  InputIndexType;
@@ -81,7 +66,7 @@ public:
   typedef typename TOutputImage::IndexType  OutputIndexType;
   typedef typename TOutputImage::RegionType OutputImageRegionType;
 
-  typedef RobustAutomaticThresholdCalculator< TInputImage, TGradientImage, TMaskImage > CalculatorType;
+  typedef RobustAutomaticThresholdCalculator< TInputImage, TGradientImage > CalculatorType;
   
   /** Image related typedefs. */
   itkStaticConstMacro(InputImageDimension, unsigned int,
@@ -106,9 +91,6 @@ public:
   /** Get the computed threshold. */
   itkGetMacro(Threshold,InputPixelType);
 
-  itkSetMacro(MaskValue, MaskPixelType);
-  itkGetMacro(MaskValue, MaskPixelType);
-
   itkSetMacro(Pow, double);
   itkGetMacro(Pow, double);
 
@@ -120,20 +102,6 @@ public:
     (Concept::OStreamWritable<OutputPixelType>));
   /** End concept checking */
 #endif
-
-   /** Set the mask image */
-  void SetMaskImage(MaskImageType *input)
-     {
-     // Process object is not const-correct so the const casting is required.
-     this->SetNthInput( 1, const_cast<MaskImageType *>(input) );
-     }
-
-  /** Get the mask image */
-  MaskImageType * GetMaskImage()
-    {
-    return static_cast<MaskImageType*>(const_cast<DataObject *>(this->ProcessObject::GetInput(2)));
-    }
-
 
    /** Set the gradient image */
   void SetGradientImage(GradientImageType *input)
@@ -162,12 +130,6 @@ public:
      this->SetGradientImage( input );
      }
 
-   /** Set the marker image */
-  void SetInput3(MaskImageType *input)
-     {
-     this->SetMaskImage( input );
-     }
-
 protected:
   RobustAutomaticThresholdImageFilter();
   ~RobustAutomaticThresholdImageFilter(){};
@@ -180,7 +142,6 @@ private:
   RobustAutomaticThresholdImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  MaskPixelType m_MaskValue;
   double m_Pow;
   InputPixelType      m_Threshold;
   OutputPixelType     m_InsideValue;

@@ -31,7 +31,7 @@ namespace itk
  *
  * \todo It's not yet clear how multi-echo images should be handled here.
  */
-template < class TInputImage, class TGradientImage, class TMaskImage >
+template < class TInputImage, class TGradientImage, class TMaskImage=TInputImage >
 class ITK_EXPORT RobustAutomaticThresholdCalculator : public Object
 {
 public:
