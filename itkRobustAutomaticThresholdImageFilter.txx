@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkRobustAutomaticThresholdImageFilter_txx
-#define _itkRobustAutomaticThresholdImageFilter_txx
+#ifndef __itkRobustAutomaticThresholdImageFilter_txx
+#define __itkRobustAutomaticThresholdImageFilter_txx
 
 #include "itkRobustAutomaticThresholdImageFilter.h"
 #include "itkBinaryThresholdImageFilter.h"
@@ -52,7 +52,7 @@ RobustAutomaticThresholdImageFilter<TInputImage, TGradientImage, TOutputImage>
   m_Threshold = thresholdCalculator->GetOutput();
 
   typename BinaryThresholdImageFilter<TInputImage,TOutputImage>::Pointer threshold = 
-    BinaryThresholdImageFilter<TInputImage,TOutputImage>::New();;
+    BinaryThresholdImageFilter<TInputImage,TOutputImage>::New();
   
   progress->RegisterInternalFilter(threshold, 1);
   threshold->GraftOutput (this->GetOutput());

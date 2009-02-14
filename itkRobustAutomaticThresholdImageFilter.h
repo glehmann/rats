@@ -23,9 +23,16 @@
 namespace itk {
 
 /** \class RobustAutomaticThresholdImageFilter 
- * \brief Threshold an image using RATS method.
+ * \brief Threshold an image using robust automatic threshold selection (RATS) method.
  *
- * \ingroup IntensityImageFilters  Multithreaded
+ * RobustAutomaticThresholdImageFilter takes two inputs: the image to be thresholded
+ * and a image of gradient magnitude of that image.
+ * The threshold is computed as the mean of the pixel values in the input image weighted
+ * by the pixel values in the gradient image.
+ * The threshold computed that way should be the mean pixel value where the intensity
+ * change the most.
+ *
+ * \ingroup IntensityImageFilters
  */
 
 template<class TInputImage, class TGradientImage=TInputImage, class TOutputImage=TInputImage>
@@ -34,10 +41,10 @@ class ITK_EXPORT RobustAutomaticThresholdImageFilter :
 {
 public:
   /** Standard Self typedef */
-  typedef RobustAutomaticThresholdImageFilter Self;
+  typedef RobustAutomaticThresholdImageFilter           Self;
   typedef ImageToImageFilter<TInputImage,TOutputImage>  Superclass;
-  typedef SmartPointer<Self>        Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef SmartPointer<Self>                            Pointer;
+  typedef SmartPointer<const Self>                      ConstPointer;
   
   /** Method for creation through the object factory. */
   itkNewMacro(Self);  
@@ -46,33 +53,34 @@ public:
   itkTypeMacro(RobustAutomaticThresholdImageFilter, ImageToImageFilter);
   
   /** Standard image type within this class. */
-  typedef TInputImage InputImageType;
-  typedef TGradientImage GradientImageType;
+  typedef TInputImage                          InputImageType;
+  typedef TGradientImage                       GradientImageType;
 
   /** Image pixel value typedef. */
-  typedef typename TInputImage::PixelType   InputPixelType;
-  typedef typename TOutputImage::PixelType   OutputPixelType;
+  typedef typename TInputImage::PixelType      InputPixelType;
+  typedef typename TOutputImage::PixelType     OutputPixelType;
   typedef typename TGradientImage::PixelType   GradientPixelType;
   
   /** Image related typedefs. */
-  typedef typename TInputImage::Pointer InputImagePointer;
-  typedef typename TOutputImage::Pointer OutputImagePointer;
-  typedef typename TGradientImage::Pointer GradientImagePointer;
+  typedef typename TInputImage::Pointer        InputImagePointer;
+  typedef typename TOutputImage::Pointer       OutputImagePointer;
+  typedef typename TGradientImage::Pointer     GradientImagePointer;
 
-  typedef typename TInputImage::SizeType  InputSizeType;
-  typedef typename TInputImage::IndexType  InputIndexType;
-  typedef typename TInputImage::RegionType InputImageRegionType;
-  typedef typename TOutputImage::SizeType  OutputSizeType;
-  typedef typename TOutputImage::IndexType  OutputIndexType;
-  typedef typename TOutputImage::RegionType OutputImageRegionType;
+  typedef typename TInputImage::SizeType       InputSizeType;
+  typedef typename TInputImage::IndexType      InputIndexType;
+  typedef typename TInputImage::RegionType     InputImageRegionType;
+  typedef typename TOutputImage::SizeType      OutputSizeType;
+  typedef typename TOutputImage::IndexType     OutputIndexType;
+  typedef typename TOutputImage::RegionType    OutputImageRegionType;
 
-  typedef RobustAutomaticThresholdCalculator< TInputImage, TGradientImage > CalculatorType;
+  typedef RobustAutomaticThresholdCalculator< TInputImage, TGradientImage >
+                                               CalculatorType;
   
   /** Image related typedefs. */
   itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension ) ;
+                      TInputImage::ImageDimension );
   itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension ) ;
+                      TOutputImage::ImageDimension );
 
   /** Set the "outside" pixel value. The default value
    * NumericTraits<OutputPixelType>::Zero. */
@@ -105,10 +113,10 @@ public:
 
    /** Set the gradient image */
   void SetGradientImage(GradientImageType *input)
-     {
-     // Process object is not const-correct so the const casting is required.
-     this->SetNthInput( 1, const_cast<GradientImageType *>(input) );
-     }
+    {
+    // Process object is not const-correct so the const casting is required.
+    this->SetNthInput( 1, const_cast<GradientImageType *>(input) );
+    }
 
   /** Get the gradient image */
   GradientImageType * GetGradientImage()
@@ -117,18 +125,17 @@ public:
     }
 
 
-
-   /** Set the input image */
+  /** Set the input image */
   void SetInput1(TInputImage *input)
-     {
-     this->SetInput( input );
-     }
+    {
+    this->SetInput( input );
+    }
 
-   /** Set the gradient image */
+  /** Set the gradient image */
   void SetInput2(GradientImageType *input)
-     {
-     this->SetGradientImage( input );
-     }
+    {
+    this->SetGradientImage( input );
+    }
 
 protected:
   RobustAutomaticThresholdImageFilter();
@@ -142,13 +149,13 @@ private:
   RobustAutomaticThresholdImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  double m_Pow;
+  double              m_Pow;
   InputPixelType      m_Threshold;
   OutputPixelType     m_InsideValue;
   OutputPixelType     m_OutsideValue;
 
 
-} ; // end of class
+}; // end of class
 
 } // end namespace itk
   
