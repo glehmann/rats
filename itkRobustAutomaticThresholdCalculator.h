@@ -24,22 +24,19 @@ namespace itk
 {
 
 /** \class RobustAutomaticThresholdCalculator
- * \brief Compute moments of an n-dimensional image.
- *
+ * \brief Compute the robust automatic threshold
  *
  * \ingroup Operators
- *
- * \todo It's not yet clear how multi-echo images should be handled here.
  */
-template < class TInputImage, class TGradientImage, class TMaskImage=TInputImage >
+template < class TInputImage, class TGradientImage >
 class ITK_EXPORT RobustAutomaticThresholdCalculator : public Object
 {
 public:
   /** Standard class typedefs. */
   typedef RobustAutomaticThresholdCalculator Self;
-  typedef Object Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef Object                             Superclass;
+  typedef SmartPointer<Self>                 Pointer;
+  typedef SmartPointer<const Self>           ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -52,21 +49,16 @@ public:
                       TInputImage::ImageDimension);
 
   /** Standard image type within this class. */
-  typedef TInputImage InputImageType;
+  typedef TInputImage    InputImageType;
   typedef TGradientImage GradientImageType;
-  typedef TMaskImage MaskImageType;
 
   /** Standard image type pointer within this class. */
-  typedef typename InputImageType::Pointer InputImagePointer;
-  typedef typename InputImageType::ConstPointer InputImageConstPointer;
-  typedef typename GradientImageType::Pointer GradientImagePointer;
+  typedef typename InputImageType::Pointer         InputImagePointer;
+  typedef typename InputImageType::ConstPointer    InputImageConstPointer;
+  typedef typename GradientImageType::Pointer      GradientImagePointer;
   typedef typename GradientImageType::ConstPointer GradientImageConstPointer;
-  typedef typename MaskImageType::Pointer MaskImagePointer;
-  typedef typename MaskImageType::ConstPointer MaskImageConstPointer;
-
-  typedef typename InputImageType::PixelType InputPixelType;
-  typedef typename GradientImageType::PixelType GradientPixelType;
-  typedef typename MaskImageType::PixelType MaskPixelType;
+  typedef typename InputImageType::PixelType       InputPixelType;
+  typedef typename GradientImageType::PixelType    GradientPixelType;
 
   /** Set the input image. */
   virtual void SetInput( const InputImageType * image )
@@ -89,19 +81,6 @@ public:
       }
     }
 
-  virtual void SetMask( const MaskImageType * image )
-    {
-    if ( m_Mask != image )
-      {
-      m_Mask = image;
-      this->Modified();
-      m_Valid = false;
-      }
-    }
-
-  itkSetMacro(MaskValue, MaskPixelType);
-  itkGetMacro(MaskValue, MaskPixelType);
-
   itkSetMacro(Pow, double);
   itkGetMacro(Pow, double);
 
@@ -123,14 +102,12 @@ private:
   RobustAutomaticThresholdCalculator(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  bool m_Valid;                      // Have moments been computed yet?
-  MaskPixelType m_MaskValue;
-  double m_Pow;
+  bool           m_Valid;                      // Have moments been computed yet?
+  double         m_Pow;
   InputPixelType m_Output;
 
-  InputImageConstPointer m_Input;
+  InputImageConstPointer    m_Input;
   GradientImageConstPointer m_Gradient;
-  MaskImageConstPointer m_Mask;
 
 };  // class RobustAutomaticThresholdCalculator
 

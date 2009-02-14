@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkRobustAutomaticThresholdCalculator_txx
-#define _itkRobustAutomaticThresholdCalculator_txx
+#ifndef __itkRobustAutomaticThresholdCalculator_txx
+#define __itkRobustAutomaticThresholdCalculator_txx
 #include "itkRobustAutomaticThresholdCalculator.h"
 
 #include "itkImageRegionConstIteratorWithIndex.h"
@@ -25,40 +25,35 @@ namespace itk
 { 
 
 
-
-template < class TInputImage, class TGradientImage, class TMaskImage >
-RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, TMaskImage>
+template < class TInputImage, class TGradientImage>
+RobustAutomaticThresholdCalculator<TInputImage, TGradientImage>
 ::RobustAutomaticThresholdCalculator(void) 
 {
   m_Valid = false;
   m_Input = NULL;
   m_Gradient = NULL;
-  m_Mask = NULL;
-  m_MaskValue = NumericTraits< MaskPixelType >::max();
   m_Output = NumericTraits< InputPixelType >::Zero;
   m_Pow = 1;
 }
 
 
-template < class TInputImage, class TGradientImage, class TMaskImage >
+template < class TInputImage, class TGradientImage >
 void
-RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, TMaskImage>
+RobustAutomaticThresholdCalculator<TInputImage, TGradientImage>
 ::PrintSelf( std::ostream& os, Indent indent ) const
 {
   Superclass::PrintSelf(os,indent);
   os << indent << "Input: " << m_Input.GetPointer() << std::endl;
   os << indent << "Gradient: " << m_Gradient.GetPointer() << std::endl;
-  os << indent << "Mask: " << m_Mask.GetPointer() << std::endl;
   os << indent << "Valid: " << m_Valid << std::endl;
-  os << indent << "MaskValue: " << m_MaskValue << std::endl;
   os << indent << "Pow: " << m_Pow << std::endl;
   os << indent << "Output: " << m_Output << std::endl;
 }
 
 
-template < class TInputImage, class TGradientImage, class TMaskImage >
+template < class TInputImage, class TGradientImage >
 void
-RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, TMaskImage>
+RobustAutomaticThresholdCalculator<TInputImage, TGradientImage>
 ::Compute()
 {
 
@@ -82,12 +77,9 @@ RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, TMaskImage>
   
   while( !iIt.IsAtEnd() )
     {
-    if( !m_Mask || m_Mask->GetPixel( iIt.GetIndex() ) == m_MaskValue )
-      {
-      double g = pow( gIt.Get(), m_Pow );
-      n += iIt.Get() * g;
-      d += g;
-      }
+    double g = pow( gIt.Get(), m_Pow );
+    n += iIt.Get() * g;
+    d += g;
     ++iIt;
     ++gIt;
     }
@@ -99,10 +91,9 @@ RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, TMaskImage>
 }
 
 
-
-template < class TInputImage, class TGradientImage, class TMaskImage >
-const typename RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, TMaskImage>::InputPixelType &
-RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, TMaskImage>
+template < class TInputImage, class TGradientImage >
+const typename RobustAutomaticThresholdCalculator<TInputImage, TGradientImage>::InputPixelType &
+RobustAutomaticThresholdCalculator<TInputImage, TGradientImage>
 ::GetOutput() const
 {
   if (!m_Valid)
@@ -113,7 +104,5 @@ RobustAutomaticThresholdCalculator<TInputImage, TGradientImage, TMaskImage>
 }
 
 } // end namespace itk
-
-
 
 #endif
